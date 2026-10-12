@@ -17,14 +17,16 @@ Shikimori (REST)  ──┘      ingestion/                      warehouse/
 |---|---|
 | `ingestion/` | one module per source, resumable, rate-limit aware. `python -m ingestion <step>` |
 | `warehouse/` | BigQuery schemas and the loader. `python -m warehouse.load` |
+| `dbt/` | dbt project: sources with freshness, staging models, tests. See `docs/dbt_setup.md` |
 | `tests/` | unit tests, plus a check that every landed file fits its BigQuery schema |
 | `docs/gcp_setup.md` | one-time GCP console setup |
+| `docs/dbt_setup.md` | connect dbt Core and the dbt platform to BigQuery |
 | `notebooks/` | exploration only |
 | `data/raw/` | landed files (gitignored) |
 
 ## Run it
 ```
-pip install -r requirements.txt
+pip install -r requirements.txt   # also installs dbt-bigquery
 python -m ingestion anilist            # ~20 min: full catalog
 python -m ingestion all --limit 500    # Kitsu + Shikimori for the 500 most popular titles (test run)
 python -m ingestion all                # everything; re-run any time, it resumes

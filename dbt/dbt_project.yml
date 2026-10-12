@@ -1,0 +1,21 @@
+name: animdle
+version: "0.1.0"
+config-version: 2
+
+profile: animdle   # dbt Core reads dbt/profiles.yml; the dbt platform ignores it and uses the connection you set up there
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+target-path: target
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  raw_dataset: animedle_raw   # where warehouse.load writes the raw tables
+
+models:
+  animdle:
+    staging:
+      +materialized: view
+      +schema: staging

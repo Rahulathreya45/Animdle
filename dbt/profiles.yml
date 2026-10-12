@@ -1,0 +1,14 @@
+# dbt Core only. Safe to commit: no secrets, it uses your `gcloud auth application-default login`.
+# The dbt platform ignores this file; there you set the connection in the UI (service account key).
+animdle:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT') }}"
+      dataset: animedle_dev
+      location: "{{ env_var('BQ_LOCATION', 'us-central1') }}"
+      threads: 4
+      job_execution_timeout_seconds: 300
+      priority: interactive

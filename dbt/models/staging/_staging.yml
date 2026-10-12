@@ -1,0 +1,107 @@
+version: 2
+
+# Tests live next to the models. Generic tests: unique, not_null, accepted_values, relationships.
+# `dbt test` runs each as a SQL query that returns the failing rows; zero rows = pass.
+models:
+  - name: stg_anilist__media
+    description: One row per AniList anime. Dates parsed, columns renamed.
+    columns:
+      - name: anilist_id
+        tests: [unique, not_null]
+      - name: mal_id
+        description: >
+          Join key to Kitsu and Shikimori. Null for entries MAL does not have. A few MAL ids are shared by two
+          AniList entries, so this is not unique; the warning below tracks how many.
+        tests:
+          - unique:
+              config: {severity: warn}
+      - name: format
+        tests:
+          - accepted_values:
+              arguments:
+                values: [TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC]
+      - name: status
+        tests:
+          - accepted_values:
+              arguments:
+                values: [FINISHED, RELEASING, NOT_YET_RELEASED, CANCELLED, HIATUS]
+
+  - name: stg_anilist__relations
+    description: One row per relation edge from an anime to a related anime or manga.
+    columns:
+      - name: anilist_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_anilist__media')
+                field: anilist_id
+      - name: relation_type
+        tests: [not_null]
+
+  - name: stg_anilist__studios
+    columns:
+      - name: anilist_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_anilist__media')
+                field: anilist_id
+      - name: studio_id
+        tests: [not_null]
+
+  - name: stg_anilist__characters
+    columns:
+      - name: anilist_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_anilist__media')
+                field: anilist_id
+      - name: character_id
+        tests: [not_null]
+
+  - name: stg_kitsu__anime
+    description: Kitsu age rating and titles, one row per MAL id Kitsu knows.
+    columns:
+      - name: mal_id
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_anilist__media')
+                field: mal_id
+      - name: age_rating
+        tests:
+          - accepted_values:
+              arguments:
+                values: [G, PG, R, R18]
+
+  - name: stg_shikimori__anime
+    description: Shikimori score, franchise slug and studios, one row per MAL id.
+    columns:
+      - name: mal_id
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_anilist__media')
+                field: mal_id
+
+  - name: stg_shikimori__franchise_nodes
+    columns:
+      - name: franchise_slug
+        tests: [not_null]
+      - name: mal_id
+        tests: [not_null]
+
+  - name: stg_shikimori__franchise_links
+    columns:
+      - name: franchise_slug
+        tests: [not_null]
+      - name: relation
+        tests: [not_null]

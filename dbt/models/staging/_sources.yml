@@ -1,0 +1,23 @@
+version: 2
+
+# A dbt "source" declares a table dbt did not build (our raw load). Models reference it with
+# {{ source('raw', 'table') }}, which gives lineage and lets dbt check how fresh the data is:
+#   dbt source freshness
+sources:
+  - name: raw
+    database: "{{ target.project }}"
+    schema: "{{ var('raw_dataset') }}"
+    config:
+      loaded_at_field: _loaded_at
+      freshness:
+        warn_after: {count: 30, period: day}
+        error_after: {count: 90, period: day}
+    tables:
+      - name: anilist_media
+        description: One row per AniList anime, as landed. Nested relations / studios / characters.
+      - name: kitsu_anime
+        description: Kitsu age rating and titles, looked up by MAL id.
+      - name: shikimori_anime
+        description: Shikimori score, franchise slug and studios, looked up by MAL id.
+      - name: shikimori_franchise
+        description: One franchise graph (nodes and links) per Shikimori franchise slug.
