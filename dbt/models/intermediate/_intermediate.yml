@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: int_franchise_members
+    description: >
+      Franchise of every AniList entry: Shikimori slug; else, via the connected components of AniList's
+      sequel/prequel/parent/side-story links, the Shikimori franchise the component touches, or a new franchise
+      'anilist-<lowest id>' for the component (a one-entry franchise for true standalones).
+    columns:
+      - name: anilist_id
+        tests: [unique, not_null]
+      - name: franchise_id
+        tests: [not_null]
+      - name: membership_source
+        tests:
+          - accepted_values:
+              arguments:
+                values: [shikimori, anilist_relation, anilist_component, standalone]

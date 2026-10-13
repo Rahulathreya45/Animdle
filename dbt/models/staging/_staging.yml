@@ -105,3 +105,15 @@ models:
         tests: [not_null]
       - name: relation
         tests: [not_null]
+
+  - name: stg_anilist__tags
+    columns:
+      - name: anilist_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_anilist__media')
+                field: anilist_id
+      - name: tag_name
+        tests: [not_null]

@@ -25,12 +25,15 @@ _date = [f("year", "INT64"), f("month", "INT64"), f("day", "INT64")]
 
 ANILIST_MEDIA = [
     f("id", "INT64"), f("idMal", "INT64"),
-    record("title", _title),
+    record("title", [f("romaji"), f("english"), f("native")]),
+    f("synonyms", "STRING", "REPEATED"),
     f("format"), f("status"), f("season"), f("seasonYear", "INT64"),
     record("startDate", _date), record("endDate", _date),
     f("episodes", "INT64"), f("duration", "INT64"), f("source"), f("countryOfOrigin"), f("isAdult", "BOOL"),
     f("genres", "STRING", "REPEATED"),
+    record("tags", [f("name"), f("rank", "INT64"), f("isMediaSpoiler", "BOOL")], repeated=True),
     f("averageScore", "INT64"), f("popularity", "INT64"), f("favourites", "INT64"),
+    record("coverImage", [f("large")]),
     record("studios", [record("edges", [
         f("isMain", "BOOL"),
         record("node", [f("id", "INT64"), f("name"), f("isAnimationStudio", "BOOL")]),
@@ -41,7 +44,10 @@ ANILIST_MEDIA = [
     ], repeated=True)]),
     record("characters", [record("edges", [
         f("role"),
-        record("node", [f("id", "INT64"), record("name", [f("full"), f("native")]), f("favourites", "INT64")]),
+        record("node", [
+            f("id", "INT64"), record("name", [f("full"), f("native")]), record("image", [f("medium")]),
+            f("gender"), f("age"), f("favourites", "INT64"),
+        ]),
     ], repeated=True)]),
     f("_loaded_at", "TIMESTAMP"),
 ]

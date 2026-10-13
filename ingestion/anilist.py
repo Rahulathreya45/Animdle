@@ -1,12 +1,13 @@
 """AniList (GraphQL): the full anime catalog. Gives us `idMal`, which Kitsu and Shikimori are looked up by.
 
 AniList rejects any query that pages past 5,000 entries, and its `pageInfo.total` / `hasNextPage` are unreliable.
-So the catalog is split into partitions that each stay under the cap (one per seasonYear plus catch-alls),
-and a partition ends at the first empty page.
+So the catalog is split into popularity ranges that each stay well under the cap, and a partition ends at the
+first empty page. Popularity is an integer on every entry, so the ranges cover the whole catalog.
+(seasonYear was tried first and is unusable: it is null for ~3,300 entries, and AniList reads years before
+~1940 as the next century, e.g. `seasonYear: 1917` returns 2017.)
 """
 from __future__ import annotations
 
-import datetime as dt
 import json
 import time
 
@@ -23,16 +24,19 @@ query ($page: Int, $perPage: Int) {
   Page(page: $page, perPage: $perPage) {
     media(type: ANIME, __FILTERS__ sort: __SORT__) {
       id idMal
-      title { english }
+      title { romaji english native }
+      synonyms
       format status season seasonYear
       startDate { year month day } endDate { year month day }
       episodes duration source countryOfOrigin isAdult
       genres
+      tags { name rank isMediaSpoiler }
       averageScore popularity favourites
+      coverImage { large }
       studios { edges { isMain node { id name isAnimationStudio } } }
       relations { edges { relationType node { id idMal type format title { english } } } }
       characters(sort: FAVOURITES_DESC, perPage: 25) {
-        edges { role node { id name { full native } favourites } }
+        edges { role node { id name { full native } image { medium } gender age favourites } }
       }
     }
   }
@@ -40,14 +44,23 @@ query ($page: Int, $perPage: Int) {
 """
 
 
-def partitions(this_year: int | None = None) -> list[tuple[str, str, str]]:
+# (lo, hi] popularity buckets, sized from the catalog's distribution to hold <3,000 entries each
+POPULARITY_EDGES = [50, 150, 400, 1000, 2000, 3500, 6000, 10000, 20000, 40000]
+
+
+def partitions() -> list[tuple[str, str, str]]:
     """(name, filter, sort) triples that together cover the catalog."""
-    this_year = this_year or dt.date.today().year
-    return (
-        [(f"year={y}", f"seasonYear: {y},", "ID") for y in range(1910, this_year + 3)]
-        + [("not_yet_released", "status: NOT_YET_RELEASED,", "ID"),
-           ("newest_ids", "", "ID_DESC")]
-    )
+    parts = []
+    lo = None
+    for hi in POPULARITY_EDGES + [None]:
+        # AniList's _greater / _lesser are strict, so (lo, hi] = greater: lo, lesser: hi + 1
+        filters = (f"popularity_greater: {lo}, " if lo is not None else "") +                   (f"popularity_lesser: {hi + 1}, " if hi is not None else "")
+        parts.append((f"popularity=({lo},{hi}]", filters, "ID"))
+        lo = hi
+    # catch-alls for entries whose popularity moved across a bucket edge during the run
+    parts += [("not_yet_released", "status: NOT_YET_RELEASED,", "ID"),
+              ("newest_ids", "", "ID_DESC")]
+    return parts
 
 
 def build_query(filters: str, sort: str) -> str:
@@ -92,6 +105,10 @@ def run() -> None:
             seen_ids.update(m["id"] for m in fresh)
             new += len(fresh)
             time.sleep(61 if remaining <= 2 else 2.1)  # AniList allows ~30 req/min
+        else:
+            if name.startswith("popularity"):  # catch-alls are unfiltered and always fill the cap; that's expected
+                print(f"WARNING: {name} hit the {MAX_PAGES_PER_PARTITION * PER_PAGE} entry cap, entries may be missing. "
+                      "Split it with another POPULARITY_EDGES value.")
         done_parts.add(name)
         ANILIST_STATE.write_text(json.dumps({"done": sorted(done_parts)}))  # checkpoint per finished partition
         print(f"{name}: {new} new entries (total {len(seen_ids)})")

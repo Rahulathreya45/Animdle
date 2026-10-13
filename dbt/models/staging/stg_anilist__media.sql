@@ -2,11 +2,15 @@ select
     id as anilist_id,
     idMal as mal_id,
     title.english as title_english,
+    title.romaji as title_romaji,
+    title.native as title_native,
+    synonyms,
     `format`,
     status,
     season,
     seasonYear as season_year,
     startDate.year as start_year,
+    startDate.month as start_month,
     safe.date(startDate.year, startDate.month, startDate.day) as start_date,  -- null when AniList only knows the year
     safe.date(endDate.year, endDate.month, endDate.day) as end_date,
     episodes,
@@ -18,5 +22,6 @@ select
     averageScore as average_score,
     popularity,
     favourites,
+    coverImage.large as cover_image_url,
     _loaded_at as loaded_at
 from {{ source('raw', 'anilist_media') }}

@@ -1,0 +1,194 @@
+version: 2
+
+# Game columns are guaranteed non-null on every row (fallbacks / explicit labels).
+# Numeric game columns (score, season_year) cannot be faked, so they are only guaranteed on
+# `is_game_eligible` rows: the `where` config limits those tests to the rows the game can pick.
+models:
+  - name: dim_anime
+    description: >
+      One row per anime (AniList entry), MUSIC excluded. Titles, dates, genres, studios, scores and age
+      rating combined from AniList, Kitsu and Shikimori. `is_game_eligible` = has every game attribute.
+    columns:
+      - name: anilist_id
+        tests: [unique, not_null]
+      - name: mal_id
+        description: Not unique - a few MAL ids are shared by two AniList entries (see stg_anilist__media).
+      - name: franchise_id
+        description: The franchise this anime belongs to. Every anime belongs to exactly one.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_franchise')
+                field: franchise_id
+      - name: display_title
+        description: English title from AniList, Kitsu or Shikimori, else romaji. Null only if no source has a title.
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: format
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, UNKNOWN]
+      - name: season
+        description: AniList season, else derived from the start month (is_season_derived = true), else UNKNOWN.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [WINTER, SPRING, SUMMER, FALL, UNKNOWN]
+      - name: season_year
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: source_material
+        tests: [not_null]
+      - name: genres
+        description: Empty array (never null) when AniList has no genres.
+      - name: score
+        description: MAL scale 0-10. Shikimori score, else AniList average / 10, else null. See score_source.
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: score_source
+        tests:
+          - accepted_values:
+              arguments:
+                values: [shikimori, anilist]
+      - name: age_rating_code
+        description: What the game compares. R18 when AniList flags the anime as adult, else Kitsu's code, else 'Not rated'.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [G, PG, R, R18, Not rated]
+      - name: age_rating
+        description: Display label. Kitsu "rating - guide", 'R18 - Adult' for AniList adult titles, else 'Not rated'.
+        tests: [not_null]
+      - name: episodes
+        description: Null for ongoing shows with no announced total; the UI shows "Ongoing" for those.
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible and status != 'RELEASING'"}
+      - name: country_of_origin
+        tests: [not_null]
+      - name: cover_image_url
+        tests: [not_null]
+      - name: studios
+        description: Shikimori studios, else AniList main animation studio, else ['UNKNOWN']. Never empty.
+      - name: popularity
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: is_game_eligible
+        tests: [not_null]
+
+  - name: dim_anime_characters
+    description: >
+      One row per (anime, character): AniList's top 25 characters by favourites for each anime in dim_anime.
+      favourites is per character, so it repeats across the anime a character appears in.
+    columns:
+      - name: anilist_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_anime')
+                field: anilist_id
+      - name: character_id
+        tests: [not_null]
+      - name: character_name
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: character_role
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [MAIN, SUPPORTING, BACKGROUND]
+      - name: favourites
+        tests: [not_null]
+      - name: gender
+        description: Normalised AniList gender. Free-text values ("Female (Varies)") become Other; not set = Unknown (~40%).
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [Male, Female, Non-binary, Other, Unknown]
+      - name: gender_raw
+        description: AniList's original gender text, for display.
+      - name: anime_format
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: anime_year
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: character_image_url
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+
+  - name: dim_franchise
+    description: >
+      One row per franchise (Shikimori franchise, or a standalone anime). Name, image, year, source and country
+      come from the main entry (earliest released significant series - TV, TV short or ONA - else movie, else
+      anything; significant = popularity at least 10% of the franchise's top entry). Score is popularity-weighted;
+      genres are those in at least half of the significant series/movies; studios are all of their studios; age
+      rating is the strictest. `is_game_eligible` = has every clue.
+    columns:
+      - name: franchise_id
+        tests: [unique, not_null]
+      - name: main_anilist_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_anime')
+                field: anilist_id
+      - name: franchise_name
+        tests: [not_null]
+      - name: cover_image_url
+        tests: [not_null]
+      - name: year
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: score
+        description: Popularity-weighted average of the entries' scores (0-10).
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: popularity
+        description: Highest AniList popularity of any entry.
+        tests: [not_null]
+      - name: age_rating_code
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [G, PG, R, R18, Not rated]
+      - name: format_label
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [Movie only, TV + Movies, TV only, Movies + OVA/ONA, OVA/ONA only]
+      - name: episodes
+        description: Total released TV episodes; number of movies for movie-only franchises (see episodes_unit). Null while a TV entry is airing with no total.
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible and not is_ongoing"}
+      - name: episodes_unit
+        tests:
+          - accepted_values:
+              arguments:
+                values: [episodes, movies]
+      - name: entry_count
+        tests: [not_null]
+      - name: is_game_eligible
+        tests: [not_null]

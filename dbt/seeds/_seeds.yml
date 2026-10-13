@@ -1,0 +1,21 @@
+version: 2
+
+# Seeds are small CSVs kept in the repo that `dbt seed` (or `dbt build`) loads as tables.
+# Good for hand-maintained lookup data like these overrides.
+seeds:
+  - name: franchise_main_entry_overrides
+    description: >
+      Hand-picked main entry for franchises where the automatic rule (earliest significant series) picks the
+      wrong face, usually because Shikimori groups a related-but-different series into the franchise.
+    config:
+      column_types: {franchise_id: string, main_anilist_id: int64, reason: string}
+    columns:
+      - name: franchise_id
+        tests: [unique, not_null]
+      - name: main_anilist_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_anime')
+                field: anilist_id
