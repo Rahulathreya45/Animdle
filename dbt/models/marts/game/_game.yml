@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: fct_puzzle_candidates
+    description: >
+      Answer pool per game mode (franchise, anime, character): game-eligible and above the popularity / favourites
+      thresholds in dbt_project.yml vars. popularity_rank is a placeholder difficulty signal.
+    columns:
+      - name: mode
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [franchise, anime, character]
+      - name: answer_id
+        tests: [not_null]
+      - name: answer_name
+        tests: [not_null]
+
+  - name: dim_search_titles
+    description: One row per (kind, target, title) for autocomplete across franchises, anime entries and characters.
+    columns:
+      - name: kind
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [franchise, anime, character]
+      - name: target_id
+        tests: [not_null]
+      - name: title
+        tests: [not_null]
+      - name: display_name
+        tests: [not_null]
+
+  - name: fct_daily_puzzles
+    description: >
+      One row per (date, mode). Incremental and append-only by date with full_refresh disabled, so a day's answer and
+      attributes are frozen once built. Scheduled puzzle_days_ahead days in advance.
+    columns:
+      - name: puzzle_id
+        tests: [unique, not_null]
+      - name: puzzle_date
+        tests: [not_null]
+      - name: mode
+        tests:
+          - accepted_values:
+              arguments:
+                values: [franchise, anime, character]
+      - name: answer_id
+        tests: [not_null]
+      - name: answer_attributes
+        description: JSON snapshot of the answer's clue values on the day it was built.
+        tests: [not_null]
