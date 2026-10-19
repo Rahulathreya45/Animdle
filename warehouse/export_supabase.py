@@ -24,11 +24,16 @@ load_dotenv()
 SCHEMA_SQL = pathlib.Path(__file__).with_name("supabase_schema.sql")
 
 # Postgres table -> BigQuery mart. Columns are matched by name, so the marts and the schema must stay in sync.
+# Gameplay tables (game_sessions, guess_events) are written by the app and are never touched here.
 TABLES = {
     "franchises": "dim_franchise",
     "anime": "dim_anime",
     "anime_characters": "dim_anime_characters",
     "search_titles": "dim_search_titles",
+    "game_items": "dim_game_items",
+    "game_clues": "game_clues",  # dbt seed, built into the marts dataset
+    "puzzle_candidates": "fct_puzzle_candidates",
+    "higher_lower_cards": "fct_higher_lower_cards",
     "daily_puzzles": "fct_daily_puzzles",
 }
 

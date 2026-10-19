@@ -19,3 +19,28 @@ seeds:
               arguments:
                 to: ref('dim_anime')
                 field: anilist_id
+
+  - name: game_clues
+    description: >
+      The clue columns of each guessing mode, in display order. Keys match dim_game_items.clues. `compare` says how
+      check_guess grades a guess: exact (same value), set (all / some / no overlap, e.g. genres) or number (higher /
+      lower arrow; "close" when within close_within, a fraction of the answer when close_is_relative).
+      Every clue is also a hint the player can reveal at turns 5 and 10.
+    config:
+      column_types: {mode: string, clue_key: string, label: string, compare: string, close_within: float64,
+                     close_is_relative: bool, sort_order: int64}
+    columns:
+      - name: mode
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [franchise, anime, character]
+      - name: clue_key
+        tests: [not_null]
+      - name: compare
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [exact, set, number]

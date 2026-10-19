@@ -192,6 +192,7 @@ select
     -- has a real value for every clue the franchise game reveals, so it can be an answer
     franchise_name is not null
         and cover_image_url is not null
+        and not ends_with(cover_image_url, '/default.jpg')  -- AniList's placeholder, not real art
         and year is not null
         and score is not null
         and array_length(genres) > 0

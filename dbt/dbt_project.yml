@@ -15,11 +15,19 @@ vars:
   raw_dataset: animedle_raw   # where warehouse.load writes the raw tables
 
   # daily puzzle (models/marts/game)
-  puzzle_start_date: "2026-10-16"       # day 1 of the schedule; never change once puzzles are published
+  # pre-launch: set to launch day and drop fct_daily_puzzles once; never change after puzzles are published
+  puzzle_start_date: "2026-10-19"       # day 1 of the schedule
   puzzle_days_ahead: 14                 # schedule this far ahead; must exceed the gap between prod runs (weekly)
   puzzle_seed: "animdle-v1"             # fixes the shuffled answer order; changing it reshuffles future days only
-  puzzle_min_popularity: 10000          # franchise / anime answers must be at least this popular on AniList
-  puzzle_min_character_favourites: 1000 # character answers must have at least this many favourites
+  puzzle_easy_pool_size: 300            # tier 1 (easy): the N most popular answers per mode
+  puzzle_min_popularity: 10000          # tier 2 (normal, = daily pool): franchise / anime AniList popularity
+  puzzle_min_character_favourites: 1000 # tier 2 (normal, = daily pool): character favourites
+  puzzle_hard_min_popularity: 1000      # tier 3 (hard) floor; below it an item is guessable but never an answer
+  puzzle_hard_min_character_favourites: 100
+
+  # higher or lower (models/marts/game/fct_higher_lower_cards)
+  higher_lower_min_popularity: 10000    # anime entry cards
+  higher_lower_min_favourites: 1000     # character cards
 
 models:
   animdle:
@@ -32,3 +40,8 @@ models:
     marts:
       +materialized: table   # query-ready tables for the game and analysis
       +schema: marts
+
+seeds:
+  animdle:
+    game_clues:
+      +schema: marts   # exported to Supabase with the game marts

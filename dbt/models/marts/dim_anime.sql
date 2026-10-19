@@ -145,6 +145,7 @@ select
         and score is not null
         and studios[offset(0)] != 'UNKNOWN'
         and cover_image_url is not null
+        and not ends_with(cover_image_url, '/default.jpg')  -- AniList's placeholder, not real art
         and country_of_origin is not null
         -- ongoing shows often have no episode total yet (e.g. One Piece); the UI shows "Ongoing" for those
         and (episodes is not null or status = 'RELEASING')

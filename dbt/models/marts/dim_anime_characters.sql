@@ -31,6 +31,7 @@ select
     -- usable as a "guess the character" answer: has a name and picture, and every anime attribute is known
     coalesce(c.character_name, c.character_name_native) is not null
         and c.character_image_url is not null
+        and not ends_with(c.character_image_url, '/default.jpg')  -- AniList's placeholder silhouette
         and a.display_title is not null
         and array_length(a.genres) > 0
         and a.`format` != 'UNKNOWN'

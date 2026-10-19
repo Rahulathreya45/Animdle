@@ -24,22 +24,15 @@ anime as (
         unnest(array_concat([display_title, title_english, title_romaji, title_native], synonyms)) as title
 ),
 
--- a character appears in several anime; label it with its most popular one
-character_label as (
-    select c.character_id, c.character_name, c.character_name_native, c.favourites, c.anime_title
-    from {{ ref('dim_anime_characters') }} as c
-    inner join {{ ref('dim_anime') }} as a using (anilist_id)
-    qualify row_number() over (partition by c.character_id order by a.popularity desc, c.anilist_id) = 1
-),
-
+-- labelled with the character's home franchise (dim_character), so it matches the clues a guess returns
 characters as (
     select
         'character' as kind,
         cast(character_id as string) as target_id,
-        concat(character_name, ' (', anime_title, ')') as display_name,
+        concat(coalesce(character_name, character_name_native), ' (', franchise_name, ')') as display_name,
         title,
         favourites as popularity
-    from character_label,
+    from {{ ref('dim_character') }},
         unnest([character_name, character_name_native]) as title
 )
 

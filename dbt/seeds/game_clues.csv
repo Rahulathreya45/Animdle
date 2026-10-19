@@ -1,0 +1,30 @@
+mode,clue_key,label,compare,close_within,close_is_relative,sort_order
+franchise,genres,Genres,set,,,1
+franchise,year,Year,number,3,false,2
+franchise,ongoing,Ongoing,exact,,,3
+franchise,score,Score,number,0.5,false,4
+franchise,format,Format,exact,,,5
+franchise,studios,Studio,set,,,6
+franchise,source,Source,exact,,,7
+franchise,country,Country,exact,,,8
+franchise,age_rating,Age rating,exact,,,9
+franchise,episodes,Episodes,number,0.25,true,10
+anime,genres,Genres,set,,,1
+anime,year,Year,number,3,false,2
+anime,season,Season,exact,,,3
+anime,format,Format,exact,,,4
+anime,ongoing,Ongoing,exact,,,5
+anime,score,Score,number,0.5,false,6
+anime,studios,Studio,set,,,7
+anime,source,Source,exact,,,8
+anime,country,Country,exact,,,9
+anime,age_rating,Age rating,exact,,,10
+anime,episodes,Episodes,number,0.25,true,11
+character,gender,Gender,exact,,,1
+character,role,Role,exact,,,2
+character,franchise,Anime,exact,,,3
+character,genres,Genres,set,,,4
+character,year,Year,number,3,false,5
+character,format,Format,exact,,,6
+character,studios,Studio,set,,,7
+character,favourites,Favourites,number,,,8

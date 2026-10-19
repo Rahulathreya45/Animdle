@@ -192,3 +192,42 @@ models:
         tests: [not_null]
       - name: is_game_eligible
         tests: [not_null]
+
+  - name: dim_character
+    description: >
+      One row per character, attached to their home franchise (biggest role, then most entries, then most popular
+      franchise; cameos and crossovers dropped). Clues come from dim_franchise so a guess has one set of values.
+    columns:
+      - name: character_id
+        tests: [unique, not_null]
+      - name: franchise_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_franchise')
+                field: franchise_id
+      - name: character_name
+        tests:
+          - not_null:
+              config: {where: "is_game_eligible"}
+      - name: character_role
+        description: Best role the character has in any entry of the home franchise.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [MAIN, SUPPORTING, BACKGROUND]
+      - name: gender
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [Male, Female, Non-binary, Other, Unknown]
+      - name: has_image
+        description: False when AniList has no picture or only its default silhouette.
+        tests: [not_null]
+      - name: favourites
+        tests: [not_null]
+      - name: is_game_eligible
+        tests: [not_null]
