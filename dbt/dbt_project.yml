@@ -17,7 +17,7 @@ vars:
   # daily puzzle (models/marts/game)
   # pre-launch: set to launch day and drop fct_daily_puzzles once; never change after puzzles are published
   puzzle_start_date: "2026-10-19"       # day 1 of the schedule
-  puzzle_days_ahead: 14                 # schedule this far ahead; must exceed the gap between prod runs (weekly)
+  puzzle_days_ahead: 365                 # schedule this far ahead; must exceed the gap between prod runs (weekly)
   puzzle_seed: "animdle-v1"             # fixes the shuffled answer order; changing it reshuffles future days only
   puzzle_easy_pool_size: 300            # tier 1 (easy): the N most popular answers per mode
   puzzle_min_popularity: 10000          # tier 2 (normal, = daily pool): franchise / anime AniList popularity
