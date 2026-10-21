@@ -1,0 +1,375 @@
+.card {
+  --img: 80px;
+  --imgH: 120px;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: var(--img) minmax(0, 1fr);
+  gap: 12px;
+  min-height: 0;
+  padding: 16px;
+  border: var(--frame) solid var(--ink);
+  background: var(--panel);
+  /* sits under the slash and the VS badge */
+  z-index: 1;
+}
+
+/* screentone dots in the corner */
+.tone {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 55%;
+  height: 55%;
+  background-image: radial-gradient(var(--ink) 1px, transparent 1.4px);
+  background-size: 6px 6px;
+  opacity: 0.1;
+  -webkit-mask-image: linear-gradient(225deg, #000, transparent 70%);
+  mask-image: linear-gradient(225deg, #000, transparent 70%);
+  pointer-events: none;
+}
+
+.coverWrap {
+  position: relative;
+  align-self: start;
+  width: var(--img);
+  height: var(--imgH);
+}
+
+.media {
+  position: relative;
+  box-sizing: border-box;
+  width: var(--img);
+  height: var(--imgH);
+  border: 2px solid var(--ink);
+  background: var(--miss);
+  overflow: hidden;
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: fade 150ms ease-out;
+}
+
+/* card A keeps the image it already showed as card B */
+.sideA .img {
+  animation: none;
+}
+
+.letter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-miss);
+  font-family: var(--font-display), sans-serif;
+  font-size: 40px;
+  line-height: 1;
+}
+
+.body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.name {
+  /* two lines reserved so both cards keep the same height */
+  min-height: 2.4em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 18px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.subtitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+  min-height: 1.4em;
+}
+
+.number {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* reserves the Right / Wrong badge height so the cards don't grow when it appears */
+  min-height: 24px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--on-match);
+  background: var(--match);
+  animation: fade 200ms ease-out;
+}
+
+.badge[data-result="wrong"] {
+  color: var(--on-board);
+  background: var(--board);
+  box-shadow: inset 0 0 0 2px var(--splat);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* wrong answer: splat over the upper ~60% of the card, behind the number; torn lower edge on the card */
+.wrong {
+  clip-path: polygon(0 0, 100% 0, 100.00% calc(100% - 8px), 95.83% 100%, 91.67% calc(100% - 8px), 87.50% 100%, 83.33% calc(100% - 8px), 79.17% 100%, 75.00% calc(100% - 8px), 70.83% 100%, 66.67% calc(100% - 8px), 62.50% 100%, 58.33% calc(100% - 8px), 54.17% 100%, 50.00% calc(100% - 8px), 45.83% 100%, 41.67% calc(100% - 8px), 37.50% 100%, 33.33% calc(100% - 8px), 29.17% 100%, 25.00% calc(100% - 8px), 20.83% 100%, 16.67% calc(100% - 8px), 12.50% 100%, 8.33% calc(100% - 8px), 4.17% 100%, 0.00% calc(100% - 8px));
+}
+
+/* wrong answer: a few small splats over the cover area only (never the text), gone by ~1.2s */
+.splats {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  width: var(--img);
+  height: var(--imgH);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.splat {
+  position: absolute;
+  opacity: 0;
+  animation: splat 1000ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splats {
+    display: none;
+  }
+}
+
+/* skeleton */
+.pulse {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.bar {
+  display: block;
+  height: 18px;
+  background: var(--miss);
+}
+
+.short {
+  width: 55%;
+  height: 14px;
+}
+
+/* motion (mobile: vertical, desktop: horizontal) */
+.leave {
+  animation: leaveY 250ms ease-in forwards;
+}
+
+.shift {
+  animation: shiftY 300ms ease-in-out forwards;
+}
+
+.enter {
+  animation: enterY 300ms ease-out both;
+}
+
+@keyframes leaveY {
+  to {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+
+@keyframes shiftY {
+  to {
+    transform: translateY(calc(-100% - 28px));
+  }
+}
+
+@keyframes enterY {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+
+@keyframes leaveX {
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes shiftX {
+  to {
+    transform: translateX(calc(-100% - 88px));
+  }
+}
+
+@keyframes enterX {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes splat {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  15% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  60% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+    visibility: hidden;
+  }
+}
+
+@media (max-height: 700px) and (max-width: 959px) {
+  .card {
+    --img: 72px;
+    --imgH: 108px;
+  }
+
+  .letter {
+    font-size: 34px;
+  }
+}
+
+@media (min-width: 960px) {
+  .label {
+    min-height: 26px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 0;
+    padding: 24px 24px 112px;
+  }
+
+  .splats {
+    left: 50%;
+    top: 24px;
+    width: 180px;
+    height: 270px;
+    transform: translateX(-50%);
+  }
+
+  .sideA {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .sideB {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  .coverWrap {
+    align-self: center;
+    width: 180px;
+    height: 270px;
+  }
+
+  .media {
+    width: 100%;
+    height: 100%;
+  }
+
+  .letter {
+    font-size: 96px;
+  }
+
+  .skeleton .media {
+    align-self: center;
+    width: 180px;
+    height: 270px;
+  }
+
+  .body {
+    gap: 6px;
+    flex: 1;
+  }
+
+  .name {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .label {
+    font-size: 15px;
+    min-height: 24px;
+  }
+
+  .leave {
+    animation-name: leaveX;
+  }
+
+  .shift {
+    animation-name: shiftX;
+  }
+
+  .enter {
+    animation-name: enterX;
+  }
+}

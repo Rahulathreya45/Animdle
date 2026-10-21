@@ -1,0 +1,237 @@
+/* Manga panels: ink frame, square corners, screentone shading a corner. Content sits above the tone layer. */
+.panel {
+  position: relative;
+  overflow: hidden;
+  border: var(--frame) solid var(--ink);
+  background: var(--panel);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.panel > *:not(.tone):not(.toneLeft),
+.hlInk > *:not(.tone):not(.toneLeft),
+.hlPaper > *:not(.tone):not(.toneLeft) {
+  position: relative;
+  z-index: 1;
+}
+
+/* screentone: halftone dots fading in from one corner */
+.tone,
+.toneLeft {
+  position: absolute;
+  bottom: 0;
+  width: 55%;
+  height: 70%;
+  pointer-events: none;
+  opacity: 0.2;
+  background-image: radial-gradient(circle, var(--ink) 1.3px, transparent 1.7px);
+  background-size: 9px 9px;
+}
+
+.tone {
+  right: 0;
+  mask-image: linear-gradient(135deg, transparent 35%, #000 100%);
+}
+
+.toneLeft {
+  left: 0;
+  mask-image: linear-gradient(225deg, transparent 35%, #000 100%);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: 32px;
+  line-height: 1.15;
+}
+
+.muted {
+  color: var(--muted);
+  max-width: 30em;
+}
+
+.example {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  perspective: 600px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: auto;
+}
+
+/* hard mode switch: a real checkbox, visually replaced by the square switch */
+.switchRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.switchInput {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 26px;
+  border: 2px solid var(--ink);
+  background: var(--panel);
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background: var(--ink);
+  transition: left 0.15s ease;
+}
+
+.switchInput:checked + .switch {
+  background: var(--close);
+}
+
+.switchInput:checked + .switch::after {
+  left: 21px;
+  background: var(--on-close);
+}
+
+.switchInput:focus-visible + .switch {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.switchText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+
+.switchTitle {
+  font-weight: 700;
+}
+
+.switchHelp {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* ---- Higher or lower: one panel cut by a diagonal, ink half and paper half ---- */
+.hlInk,
+.hlPaper {
+  position: relative;
+  padding: 40px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hlInk {
+  background: var(--ink);
+  color: var(--paper);
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+  margin-right: -6%;
+  padding-right: calc(6% + 40px);
+}
+
+.hlInk .tone,
+.hlInk .toneLeft {
+  background-image: radial-gradient(circle, var(--paper) 1.3px, transparent 1.7px);
+}
+
+.hlPaper {
+  background: var(--panel);
+  color: var(--ink);
+  clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%);
+  margin-left: -6%;
+  padding-left: calc(6% + 40px);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.infoButton {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sourceNote {
+  max-width: 26em;
+  padding: 12px 14px;
+  border: 2px solid currentColor;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.soft {
+  max-width: 24em;
+  opacity: 0.82;
+}
+
+.best {
+  font-size: 15px;
+  opacity: 0.82;
+}
+
+.best strong {
+  font-size: 17px;
+}
+
+.push {
+  margin-top: auto;
+}
+
+@media (max-width: 480px) {
+  .example {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .panel {
+    padding: 28px 24px;
+  }
+
+  .hlInk {
+    clip-path: polygon(0 0, 100% 0, 100% 86%, 0 100%);
+    margin: 0 0 -28px;
+    padding: 28px 24px 64px;
+  }
+
+  .hlPaper {
+    clip-path: polygon(0 14%, 100% 0, 100% 100%, 0 100%);
+    margin: 0;
+    padding: 64px 24px 28px;
+  }
+}

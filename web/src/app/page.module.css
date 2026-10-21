@@ -1,0 +1,200 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 24px 0;
+}
+
+.brand {
+  font-family: var(--font-display), sans-serif;
+  font-size: 22px;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* ---- hero: the opening panel ---- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border: var(--frame) solid var(--ink);
+  background: var(--panel);
+  padding: 72px 56px 80px;
+  margin: 8px 0 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+/* manga focus lines, centred on the sound effect and faded out where the text sits */
+.speedlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background:
+    repeating-conic-gradient(from 3deg at 90% 50%, var(--ink) 0deg 0.5deg, transparent 0.5deg 5.5deg),
+    repeating-conic-gradient(from 0deg at 90% 50%, var(--ink) 0deg 0.25deg, transparent 0.25deg 3.1deg);
+  mask-image: radial-gradient(ellipse at 90% 50%, transparent 0 16%, #000 52%);
+}
+
+.heroCopy,
+.sfx {
+  position: relative;
+  z-index: 1;
+}
+
+.heroCopy {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tagline {
+  max-width: 30em;
+  font-size: 24px;
+  line-height: 1.45;
+}
+
+/* ---- sections ---- */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 72px;
+}
+
+.section:last-child {
+  padding-bottom: 88px;
+}
+
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.sectionTitle {
+  font-size: 44px;
+  line-height: 1.1;
+}
+
+.sectionText {
+  max-width: 40em;
+  color: var(--muted);
+}
+
+.guessGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gutter);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.legendSwatches {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.legendSwatches span {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--miss);
+}
+
+.legendSwatches span[data-status="match"] {
+  background: var(--match);
+}
+
+.legendSwatches span[data-status="close"] {
+  background: var(--close);
+}
+
+/* higher or lower: two halves inside one ink frame, cut by a diagonal */
+.split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: var(--frame) solid var(--ink);
+  background: var(--ink);
+  overflow: hidden;
+}
+
+/* ---- footer ---- */
+.footer {
+  border-top: var(--frame) solid var(--ink);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.footer p {
+  max-width: 40em;
+}
+
+.footerEnd {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  font-weight: 500;
+}
+
+/* the episode-ending "To be continued" arrow card */
+.toBeContinued {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 22px 0 40px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display), sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  clip-path: polygon(24px 0, 100% 0, 100% 100%, 24px 100%, 0 50%);
+}
+
+@media (max-width: 820px) {
+  .hero {
+    padding: 48px 24px 56px;
+  }
+
+  .sfx {
+    display: none;
+  }
+
+  .guessGrid,
+  .split {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}

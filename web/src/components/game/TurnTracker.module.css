@@ -1,0 +1,65 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  gap: 2px;
+  padding: 8px 0 18px;
+}
+
+.cell {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 16px;
+  height: 24px;
+  border: 2px solid var(--ink);
+  background: var(--panel);
+}
+
+.cell[data-used] {
+  background: conic-gradient(var(--checker-a) 25%, var(--checker-b) 0 50%, var(--checker-a) 0 75%, var(--checker-b) 0) 0 0 / 12px 12px;
+}
+
+.cell[data-newest] {
+  animation: pulse 0.4s ease-out;
+}
+
+.notch {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  margin-left: -4px;
+  border: 4px solid transparent;
+  border-top: 6px solid var(--ink);
+  border-bottom: 0;
+}
+
+.num {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.caption {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+@keyframes pulse {
+  from {
+    outline: 3px solid var(--focus);
+    outline-offset: 1px;
+  }
+  to {
+    outline: 3px solid transparent;
+    outline-offset: 5px;
+  }
+}

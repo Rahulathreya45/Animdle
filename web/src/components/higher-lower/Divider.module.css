@@ -1,0 +1,100 @@
+/* Mobile: a near-horizontal slash in a 28px band between stacked cards. Desktop: a near-vertical slash in the 88px column. */
+.divider {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  pointer-events: none;
+}
+
+.slash {
+  position: absolute;
+  left: -16px;
+  right: -16px;
+  top: 50%;
+  height: 3px;
+  margin-top: -1.5px;
+  transform: rotate(-4deg);
+  background: linear-gradient(90deg, transparent, var(--ink) 12%, var(--ink) 88%, transparent);
+  /* tapered streak trailing the cut */
+  box-shadow: 0 6px 0 -1px color-mix(in srgb, var(--ink) 45%, transparent);
+}
+
+.flash {
+  animation: flash 200ms ease-out;
+}
+
+.vs {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  color: var(--ink);
+}
+
+.vs svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.vsText {
+  position: relative;
+  font-family: var(--font-display), sans-serif;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.spin svg {
+  animation: spin 400ms ease-in-out;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes flash {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (min-width: 960px) {
+  .divider {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    height: auto;
+    align-self: stretch;
+  }
+
+  .slash {
+    left: 50%;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    height: auto;
+    margin: 0 0 0 -2px;
+    transform: rotate(5deg);
+    background: linear-gradient(180deg, transparent, var(--ink) 10%, var(--ink) 90%, transparent);
+    box-shadow: 8px 0 0 -1px color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .vs {
+    width: 88px;
+    height: 88px;
+  }
+
+  .vsText {
+    font-size: 24px;
+  }
+}

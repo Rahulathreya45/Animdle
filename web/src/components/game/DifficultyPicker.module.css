@@ -1,0 +1,53 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: var(--frame) solid var(--ink);
+}
+
+.option {
+  min-height: 44px;
+  border: 0;
+  border-left: 2px solid var(--ink);
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.option:first-child {
+  border-left: 0;
+}
+
+.option[aria-checked="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.option:not([aria-checked="true"]):hover:not(:disabled) {
+  background: var(--miss);
+}
+
+.option:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.option:focus-visible {
+  outline-offset: -6px;
+}
+
+.help {
+  font-size: 14px;
+  color: var(--muted);
+}

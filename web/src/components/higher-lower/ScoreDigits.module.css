@@ -1,0 +1,188 @@
+/* Haikyu-style scoreboard: dark tiles with a hinge line. Tile size comes from --tile-w / --tile-h / --tile-font. */
+.row {
+  --tile-w: 26px;
+  --tile-h: 36px;
+  --tile-font: 18px;
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  gap: 2px;
+  width: 100%;
+  max-width: calc(7 * var(--tile-w) + 6 * 2px + 2 * 8px);
+  white-space: nowrap;
+  font-family: var(--font-display), sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.slot {
+  display: flex;
+  align-items: flex-end;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: var(--tile-w);
+}
+
+.tile {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--tile-h);
+  background: var(--board);
+  color: var(--on-board);
+  border: 2px solid var(--ink);
+  font-size: var(--tile-font);
+  line-height: 1;
+  overflow: hidden;
+}
+
+/* hinge line across the middle */
+.tile::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - 1px);
+  height: 2px;
+  background: var(--paper);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* blank leading tiles: faint hinge so they do not read as a dash */
+.tile:not(:has(.v:not(:empty)))::after {
+  opacity: 0.2;
+}
+
+.q,
+.v {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  z-index: 1;
+}
+
+.v {
+  opacity: 0;
+}
+
+.comma {
+  flex: none;
+  align-self: flex-end;
+  width: 8px;
+  margin-left: 2px;
+  color: var(--muted);
+  font-size: var(--tile-font);
+  line-height: 1;
+  text-align: center;
+}
+
+/* the comma sits inside the slot's flex row; give the slot room for it */
+.slot:has(.comma) {
+  flex-grow: 1.4;
+  max-width: calc(var(--tile-w) + 10px);
+}
+
+.slot:has(.comma) .tile {
+  max-width: var(--tile-w);
+}
+
+/* right answer: green bottom edge on the tiles */
+.row[data-result="right"] .tile {
+  box-shadow: inset 0 -3px 0 var(--match);
+}
+
+/* final states (also what reduced motion shows) */
+.shown .q,
+.flip .q {
+  opacity: 0;
+}
+
+.shown .v,
+.flip .v {
+  opacity: 1;
+}
+
+.flip .q {
+  animation: flipOut 110ms ease-in calc(150ms + var(--i) * 60ms) both;
+}
+
+.flip .v {
+  animation: flipIn 110ms ease-out calc(260ms + var(--i) * 60ms) backwards;
+}
+
+@keyframes flipOut {
+  from {
+    opacity: 1;
+    transform: rotateX(0);
+  }
+  99% {
+    opacity: 1;
+    transform: rotateX(90deg);
+  }
+  to {
+    opacity: 0;
+    transform: rotateX(90deg);
+  }
+}
+
+@keyframes flipIn {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0);
+  }
+}
+
+@media (max-width: 374px) {
+  .row:not(.streak) {
+    --tile-w: 22px;
+  }
+}
+
+/* streak counter: always shows the digits, flips in on mount */
+.streak {
+  --tile-w: 28px;
+  --tile-h: 40px;
+  --tile-font: 20px;
+  width: auto;
+  gap: 3px;
+}
+
+.streak .slot {
+  flex: none;
+  width: var(--tile-w);
+}
+
+.streak .v {
+  opacity: 1;
+}
+
+.pop .v {
+  animation: flipIn 220ms ease-out both;
+}
+
+@media (min-width: 960px) {
+  .row {
+    --tile-w: 44px;
+    --tile-h: 62px;
+    --tile-font: 34px;
+    gap: 3px;
+    max-width: calc(7 * var(--tile-w) + 6 * 3px + 2 * 11px);
+  }
+
+  .comma {
+    width: 10px;
+  }
+
+  .streak {
+    --tile-w: 32px;
+    --tile-h: 46px;
+    --tile-font: 26px;
+    max-width: none;
+  }
+}

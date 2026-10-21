@@ -1,0 +1,86 @@
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tile {
+  position: relative;
+  min-height: 64px;
+  padding: 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  font-weight: 700;
+  font-size: var(--tile-font, 14px);
+  line-height: 1.2;
+  overflow-wrap: var(--tile-wrap, break-word);
+  word-break: normal;
+  background: var(--miss);
+  color: var(--on-miss);
+  /* the reveal: tiles flip in, like the clues in the game */
+  animation: flip 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: var(--delay, 0s);
+}
+
+.value {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tile[data-still] {
+  animation: none;
+}
+
+.glyph {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  opacity: 0.85;
+}
+
+.tile svg:not(.glyph) {
+  flex: none;
+}
+
+.tile[data-detailed] {
+  flex: 1;
+  padding: 6px 8px 6px 6px;
+}
+
+.tile[data-status="unknown"] {
+  border: 2px dashed var(--muted);
+}
+
+.tile[data-status="match"] {
+  background: var(--match);
+  color: var(--on-match);
+}
+
+.tile[data-status="close"],
+.tile[data-status="partial"] {
+  background: var(--close);
+  color: var(--on-close);
+}
+
+.label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+@keyframes flip {
+  from {
+    transform: rotateX(90deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateX(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,14 @@
+.sfx {
+  flex: none;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.sfx text {
+  font-family: var(--font-display), sans-serif;
+  fill: var(--menace);
+  stroke: var(--ink);
+  stroke-width: 8px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}

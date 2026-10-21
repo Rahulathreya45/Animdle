@@ -1,0 +1,236 @@
+.root {
+  padding-bottom: 48px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* mobile: one column, the controls first, then the end card and the guesses */
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.side,
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.desc {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.tracker,
+.inputArea,
+.hintArea {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.title {
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.pills {
+  display: flex;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 2px solid var(--close);
+  background: color-mix(in srgb, var(--close) 18%, var(--panel));
+  font-size: 14px;
+}
+
+.notice[data-kind="error"] {
+  border-color: var(--ink);
+}
+
+.small {
+  height: 44px;
+  padding: 0 16px;
+}
+
+/* revealed clues, like Pokedex entries */
+.hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  max-width: 100%;
+  padding: 4px 12px;
+  border-left: 4px solid var(--dex-red);
+  background: var(--panel);
+  border-top: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  animation: entry 0.18s ease-out both;
+}
+
+.hintLabel {
+  flex: none;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px;
+  border: var(--frame) solid var(--ink);
+  background: var(--panel);
+}
+
+.panelTitle {
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.panelActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* loading skeleton */
+.skeleton {
+  display: block;
+  background: linear-gradient(90deg, var(--miss) 30%, var(--panel) 50%, var(--miss) 70%) 0 0 / 300% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+.skeletonTracker {
+  display: flex;
+  gap: 2px;
+  padding: 8px 0 18px;
+}
+
+.skeletonTracker .skeleton {
+  flex: 1 1 0;
+  min-width: 16px;
+  height: 24px;
+}
+
+.skeletonInput {
+  height: 52px;
+}
+
+.skeletonCards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonCard {
+  height: 150px;
+  border: var(--frame) solid var(--ink);
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -300% 0;
+  }
+}
+
+@keyframes entry {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (min-width: 960px) {
+  /* one wide column: title, description, controls band, then the history */
+  .layout {
+    gap: 24px;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 400px);
+    grid-template-areas:
+      "input tracker"
+      "input hint"
+      "input chips";
+    grid-template-rows: auto auto 1fr;
+    align-items: start;
+    gap: 16px 32px;
+  }
+
+  .controls[data-ended] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "tracker" "chips";
+    grid-template-rows: auto;
+  }
+
+  .tracker { grid-area: tracker; }
+  .inputArea { grid-area: input; }
+  .hintArea { grid-area: hint; }
+  .chips { grid-area: chips; }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .desc {
+    font-size: 18px;
+  }
+}

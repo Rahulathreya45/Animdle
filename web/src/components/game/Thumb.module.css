@@ -1,0 +1,19 @@
+.thumb,
+.placeholder {
+  flex: none;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+}
+
+.thumb {
+  object-fit: cover;
+  background: var(--miss);
+}
+
+.placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--miss);
+  font-family: var(--font-display), sans-serif;
+}

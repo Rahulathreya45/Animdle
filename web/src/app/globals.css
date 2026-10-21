@@ -1,0 +1,120 @@
+/* Design tokens. Night is the default theme; data-theme="day" on <html> switches to day.
+   Clue colours match the game feedback: match = green, close/partial = amber, miss = grey. */
+:root {
+  --paper: #151925;
+  --ink: #eceef4;
+  --muted: #a3a9ba;
+  --panel: #1b2030;
+  --match: #3dba82;
+  --on-match: #0c1a13;
+  --close: #f2bc55;
+  --on-close: #1c1708;
+  --miss: #2c3245;
+  --on-miss: #eceef4;
+  --focus: #8db0ff;
+  --menace: #b07cf0;
+  --franchise: #5b9bff;
+  --on-franchise: #0b1630;
+  --checker-a: #3dba82;
+  --checker-b: #0f1219;
+  --dex-red: #c8102e;
+  --on-dex-red: #ffffff;
+  --dex-screen: #183a2a;
+  --dex-on-screen: #ddf5e5;
+  --nen-a: #7cf5ff;
+  --nen-b: #b07cf0;
+  --board: #0d1017;
+  --on-board: #f7f3e3;
+  --splat: #ff3b3b;
+
+  --frame: 3px;
+  --gutter: 16px;
+  color-scheme: dark;
+}
+
+:root[data-theme="day"] {
+  --paper: #fcfcfd;
+  --ink: #1c2130;
+  --muted: #5b6275;
+  --panel: #ffffff;
+  --match: #1e7f55;
+  --on-match: #ffffff;
+  --close: #f0b23e;
+  --on-close: #1c2130;
+  --miss: #e6e8ee;
+  --on-miss: #1c2130;
+  --focus: #2f6feb;
+  --menace: #9b5de5;
+  --franchise: #2f6feb;
+  --on-franchise: #ffffff;
+  --checker-a: #1e7f55;
+  --checker-b: #1c2130;
+  --dex-screen: #cfe8d5;
+  --dex-on-screen: #1c2130;
+  --nen-a: #0f8fa0;
+  --nen-b: #7b3fe4;
+  --board: #1c2130;
+  --splat: #d7263d;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 400;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--muted);
+}
+
+button {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

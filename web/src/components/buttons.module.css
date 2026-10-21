@@ -1,0 +1,50 @@
+/* Square, ink-framed buttons (the panels are square too). Used on <Link> and <button>. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  padding: 0 22px;
+  border: 2px solid var(--ink);
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary {
+  composes: button;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.primary:hover {
+  background: var(--muted);
+  border-color: var(--muted);
+  color: var(--paper);
+}
+
+.secondary {
+  composes: button;
+  background: transparent;
+  color: var(--ink);
+}
+
+.secondary:hover {
+  background: var(--miss);
+  color: var(--ink);
+}
+
+/* for buttons sitting on an ink-filled panel */
+.inverted {
+  composes: button;
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+
+.inverted:hover {
+  background: var(--miss);
+  border-color: var(--miss);
+  color: var(--ink);
+}

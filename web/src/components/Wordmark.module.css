@@ -1,0 +1,39 @@
+.wordmark {
+  font-size: clamp(52px, 11vw, 152px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.letter {
+  position: relative;
+  display: inline-block;
+}
+
+.prop {
+  position: absolute;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.hat {
+  width: 0.8em;
+  left: 50%;
+  top: -0.3em;
+  transform: translateX(-50%) rotate(-12deg);
+}
+
+/* covers the i's own dot */
+.ball {
+  width: 0.31em;
+  left: 50%;
+  top: 0.04em;
+  transform: translateX(-50%);
+}
+
+.band {
+  width: 0.95em;
+  left: -0.13em;
+  top: 0.04em;
+  transform: rotate(-4deg);
+}

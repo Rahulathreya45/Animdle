@@ -229,3 +229,6 @@ data/
 dbt/target/
 dbt/dbt_packages/
 dbt/logs/
+
+.ui-workflow/
+.fix-workflow/

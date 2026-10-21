@@ -216,6 +216,8 @@ create table if not exists game_sessions (
     started_at           timestamptz not null default now(),
     finished_at          timestamptz
 );
+-- added after first release; idempotent for databases that already have the table
+alter table game_sessions add column if not exists gave_up boolean not null default false;
 -- one daily game per player per mode per day: reopening the page resumes it
 create unique index if not exists game_sessions_daily_idx
     on game_sessions (player_id, mode, puzzle_date) where play_type = 'daily';
@@ -374,6 +376,7 @@ begin
         'puzzle_date', s.puzzle_date,
         'difficulty_tier', s.difficulty_tier,
         'status', s.status,
+        'gave_up', s.gave_up,
         'attempts', s.attempts,
         'max_attempts', 15,
         -- one hint unlocks after every 5th guess (turns 5 and 10); the name is revealed at 15 (game over)
@@ -514,6 +517,29 @@ begin
     end if;
 
     update game_sessions set hints_revealed = hints_revealed || p_clue_key where session_id = p_session_id;
+    return get_game(p_session_id);
+end $$;
+
+-- Give up: end the game early. Counts as lost (gave_up = true) and the answer is revealed by get_game.
+--   supabase.rpc('give_up', { p_session_id: '<uuid>' })
+create or replace function give_up(p_session_id uuid)
+returns jsonb
+language plpgsql volatile security definer
+set search_path = public
+as $$
+declare
+    s game_sessions%rowtype;
+begin
+    select * into s from game_sessions where session_id = p_session_id for update;
+    if not found then
+        raise exception 'unknown game %', p_session_id using errcode = 'P0002';
+    end if;
+    if s.status != 'playing' then
+        raise exception 'game is already over' using errcode = '22023';
+    end if;
+
+    update game_sessions set status = 'lost', gave_up = true, finished_at = now()
+    where session_id = p_session_id;
     return get_game(p_session_id);
 end $$;
 
